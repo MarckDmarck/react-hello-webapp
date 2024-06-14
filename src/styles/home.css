@@ -1,0 +1,6 @@
+.dropdown-menu {
+    max-width: 100%;
+    overflow-x: hidden;
+    word-wrap: break-word; 
+    white-space: normal; 
+  }

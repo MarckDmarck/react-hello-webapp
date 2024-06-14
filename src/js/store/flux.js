@@ -12,10 +12,70 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			allCharacters:[],
+			characters:{},
+			planets:{},
+			favorites:[],
+			allPlanets:[]
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
+			getPlanets: () => {
+				try {
+					fetch("https://swapi.dev/api/planets")
+					.then((resp) => {
+						if(!resp.ok) {
+							throw new Error("La respuesta del servidor fue mala")
+						}
+						return resp.json();
+					})
+					.then((data) => {
+						setStore({allPlanets: data.results})
+						const onePlanet = data.results.reduce((acc, pla) => {
+							acc[pla.name] = pla
+							return acc;
+						}, {})
+						setStore({planets: onePlanet})
+					})
+
+				} catch(error) {
+					console.error("Hubo un problema al hacer el llamado al fetch",error)
+				}
+			},
+			removeFavorite: (name) => {
+				const store = getStore();
+				console.log("antes", store.favorites)
+				setStore({ favorites: store.favorites.filter(fav => fav !== name )})
+				console.log("despues", store.favorites)
+			},
+			addFavorite: (name) => {
+				const store = getStore()
+				
+				setStore({favorites:[...store.favorites, name] })
+			},
+			getCharacters: () => {
+				try {
+					 fetch("https://swapi.dev/api/people")
+					.then((resp) => {
+						if(!resp.ok) {
+							throw new Error("Hubo un error al obtener los datos")
+						}
+						return resp.json()
+					})
+					.then((data) => {
+						setStore({allCharacters : data.results})
+						const oneCharacter = data.results.reduce((acc, char) => {
+							acc[char.name] = char;
+							return acc;
+						}, {})
+						setStore({characters: oneCharacter})
+						console.log("andamos probando",oneCharacter)
+					})
+
+				}catch (error) {
+					console.error("No se pudo realizar el fetch", error)
+				}
+			},
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
